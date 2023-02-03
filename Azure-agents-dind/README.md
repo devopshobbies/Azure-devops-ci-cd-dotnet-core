@@ -11,10 +11,6 @@ docker build --build-args AGENT_VERSION=<agent version> -t <image name> .
 docker build --build-args AGENT_VERSION=2.205.0 -t dockeragent:2.205.0 .
 ```
 
-## Run
-```
-docker run --name <name> -d --network host --privileged <environment variables> <volume mounts> <image name>
-```
 ### Environment variables
 + AZP_URL: Azure DevOps instance address
 + AZP_TOKEN: PAT token generated from Azure DevOps
@@ -32,6 +28,8 @@ docker run --name <name> -d --network host --privileged <environment variables> 
 #### Named volumes
 + Docker files
   + `/var/lib/docker`
-    docker run -d -e AZP_URL=<Azure Devops Server> -e AZP_TOKEN=<PAT token> \
-    -e AZP_AGENT_NAME=<Agent name> -e AZP_POOL=<Agent pool name> --name <container name> \
-    -v docker-agent-volume:/var/lib/docker/ --network host dockeragent:latest
+
+## Run agent 
+```
+docker run --name <name> -d --network host --privileged <environment variables> <volume mounts> <image name>
+```
