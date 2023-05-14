@@ -1,0 +1,28 @@
+trigger:
+  - main
+pool:
+  name: Default
+
+variables:
+  imageName: "saeedhosseini21/devops-hobbies-app"
+
+steps: 
+  - task: Docker@2
+    displayName: Build image
+    inputs:
+      repository: $(imageName)
+      command: build 
+      Dockerfile: Dockerfile
+      tags: | 
+        latest
+        $(build.buildId)
+
+  - task: Docker@2
+    displayName: Push image
+    inputs:
+      repository: $(imageName)
+      command: Push 
+      containerRegistry: dockerRegistryServiceConnection
+      tags: | 
+        latest
+        $(build.buildId)
