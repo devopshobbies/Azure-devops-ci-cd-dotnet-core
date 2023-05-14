@@ -1,0 +1,21 @@
+resources:
+ repositories:
+   - repository: 'azure-templates'  
+     name: 'azure-templates'
+     type: git
+     ref: 'refs/heads/main'
+
+trigger:
+  - main
+  - multi-platform
+
+variables:
+  imageName: "saeedhosseini21/devops-hobbies-app"
+  BuildConfiguration: "Release"
+  windows_artifact_name: "devops-hobbies-app"
+
+extends:
+  template: azure-pipeline-ci.yml@azure-templates
+  parameters:
+      docker_pool: Default
+      windows_pool: windows
