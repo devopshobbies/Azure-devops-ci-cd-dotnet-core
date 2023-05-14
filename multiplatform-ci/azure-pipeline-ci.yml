@@ -1,0 +1,60 @@
+parameters:
+- name: docker_pool
+  type: string 
+  default: Default
+- name: windows_pool
+  type: string 
+  default: windows
+  
+jobs:
+- job: 'Docker_build'
+  pool: ${{ parameters.docker_pool}}
+  steps: 
+  - task: Docker@2
+    displayName: Build image
+    inputs:
+      repository: $(imageName)
+      command: build 
+      Dockerfile: Dockerfile
+      tags: | 
+        latest
+        $(build.buildId)
+
+  - task: Docker@2
+    displayName: Push image
+    inputs:
+      repository: $(imageName)
+      command: Push 
+      containerRegistry: dockerRegistryServiceConnection
+      tags: | 
+        latest
+        $(build.buildId)
+
+- job: 'Windows_build' 
+  pool: ${{ parameters.windows_pool }}
+  steps:
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet test'
+      inputs:
+        command: 'test'
+        arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura'
+        publishTestResults: true
+      
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish code coverage report'
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: publish
+        publishWebProjects: True
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+        zipAfterPublish: True
+
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)' 
+        artifactName: "$(windows_artifact_name)-$(build.buildId)"
+    
