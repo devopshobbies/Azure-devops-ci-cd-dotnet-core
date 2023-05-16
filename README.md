@@ -1,4 +1,5 @@
 # Azuredevops-ci-cd-dotnet-core
+The Dotnet project we used in this tutorial: https://github.com/FabianGosebrink/ASPNETCore-WebAPI-Sample 
 ## Installing Azure-Devops agent as container
 The script and Dockerfile for building and running the agent as container, are  under the directory Azure-agents-dind.
 ## Continous integration using Docker images
